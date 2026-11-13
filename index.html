@@ -2,183 +2,274 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ماشین حساب ساده</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ماشین حساب مدرن</title>
     <style>
+        /* تنظیمات کلی */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
         }
 
+        /* پس زمینه تمام صفحه با گرادیانت جذاب */
         body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            overflow: hidden; /* جلوگیری از اسکرول شدن */
         }
 
+        /* بدنه ماشین حساب */
         .calculator {
-            background: #2c3e50;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
             width: 100%;
-            max-width: 350px;
+            max-width: 400px;
+            height: 100vh; /* پر کردن کل ارتفاع */
+            max-height: 800px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
         }
 
+        /* صفحه نمایش */
         .display {
-            background: #1a252f;
-            color: white;
-            font-size: 40px;
-            text-align: left;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
             padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            min-height: 80px;
+            color: #fff;
+            direction: ltr; /* اعداد از چپ به راست نوشته شوند */
+            overflow: hidden;
+        }
+
+        .previous-operand {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.5);
+            min-height: 30px;
+            margin-bottom: 10px;
+        }
+
+        .current-operand {
+            font-size: 4rem;
+            font-weight: 300;
+            letter-spacing: 2px;
             word-wrap: break-word;
             word-break: break-all;
-            direction: ltr;
+            text-align: right;
+            max-width: 100%;
         }
 
+        /* بخش دکمه ها */
         .buttons {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            gap: 15px;
+            padding-bottom: 20px;
         }
 
+        /* استایل کلی دکمه ها */
         button {
             border: none;
             outline: none;
-            font-size: 24px;
-            border-radius: 10px;
+            border-radius: 50%; /* دکمه های گرد */
+            font-size: 1.8rem;
+            font-weight: 500;
+            height: 75px;
             cursor: pointer;
-            padding: 20px;
-            transition: 0.2s;
-            color: white;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         button:active {
-            transform: scale(0.95);
+            transform: scale(0.9);
         }
 
+        /* دکمه های اعداد */
         .num-btn {
-            background: #34495e;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .num-btn:hover {
-            background: #3d566e;
-        }
+        .num-btn:hover { background: rgba(255, 255, 255, 0.2); }
 
+        /* دکمه های عملگر (نارنجی) */
         .op-btn {
-            background: #e67e22;
+            background: #ff9f0a;
+            color: #fff;
+            font-size: 2rem;
         }
-        .op-btn:hover {
-            background: #d35400;
-        }
+        .op-btn:hover { background: #ffb03a; }
 
+        /* دکمه مساوی (سبز) */
         .equals-btn {
-            background: #27ae60;
+            background: #30d158;
+            font-size: 2rem;
         }
-        .equals-btn:hover {
-            background: #2ecc71;
+        .equals-btn:hover { background: #42e06a; }
+
+        /* دکمه پاک کردن (قرمز) */
+        .clear-btn {
+            background: rgba(255, 69, 58, 0.8);
+            color: white;
+        }
+        .clear-btn:hover { background: rgba(255, 69, 58, 1); }
+
+        /* دکمه صفر که دو خانه را اشغال می کند */
+        .zero-btn {
+            grid-column: span 2;
+            border-radius: 40px; /* کشیده */
+            justify-content: flex-start;
+            padding-left: 30px;
         }
 
-        .clear-btn {
-            background: #c0392b;
-        }
-        .clear-btn:hover {
-            background: #e74c3c;
-        }
     </style>
 </head>
 <body>
 
     <div class="calculator">
-        <div class="display" id="display">0</div>
-        <div class="buttons">
-            <button class="clear-btn" onclick="clearDisplay()">C</button>
-            <button class="op-btn" onclick="appendOperator('/')">÷</button>
-            <button class="op-btn" onclick="appendOperator('*')">×</button>
-            <button class="op-btn" onclick="appendOperator('-')">-</button>
+        <div class="display">
+            <div class="previous-operand" id="previous-operand"></div>
+            <div class="current-operand" id="current-operand">0</div>
+        </div>
 
+        <div class="buttons">
+            <!-- دکمه های ردیف اول -->
+            <button class="clear-btn" onclick="clearAll()">C</button>
+            <button class="op-btn" onclick="deleteNumber()">⌫</button>
+            <button class="op-btn" onclick="chooseOperation('/')">÷</button>
+            <button class="op-btn" onclick="chooseOperation('*')">×</button>
+
+            <!-- ردیف دوم -->
             <button class="num-btn" onclick="appendNumber('7')">7</button>
             <button class="num-btn" onclick="appendNumber('8')">8</button>
             <button class="num-btn" onclick="appendNumber('9')">9</button>
-            <button class="op-btn" onclick="appendOperator('+')">+</button>
+            <button class="op-btn" onclick="chooseOperation('-')">−</button>
 
+            <!-- ردیف سوم -->
             <button class="num-btn" onclick="appendNumber('4')">4</button>
             <button class="num-btn" onclick="appendNumber('5')">5</button>
             <button class="num-btn" onclick="appendNumber('6')">6</button>
-            <button class="num-btn" onclick="appendNumber('.')">.</button>
+            <button class="op-btn" onclick="chooseOperation('+')">+</button>
 
+            <!-- ردیف چهارم -->
             <button class="num-btn" onclick="appendNumber('1')">1</button>
             <button class="num-btn" onclick="appendNumber('2')">2</button>
             <button class="num-btn" onclick="appendNumber('3')">3</button>
             <button class="equals-btn" onclick="calculate()">=</button>
 
-            <button class="num-btn" style="grid-column: span 3;" onclick="appendNumber('0')">0</button>
-            <!-- دکمه = به ردیف بالا منتقل شد تا چیدمان درست شود -->
+            <!-- ردیف پنجم -->
+            <button class="num-btn zero-btn" onclick="appendNumber('0')">0</button>
+            <button class="num-btn" onclick="appendNumber('.')">.</button>
         </div>
     </div>
 
     <script>
-        let currentInput = '0';
-        let shouldResetScreen = false;
+        // منطق ماشین حساب
+        let currentOperand = '0';
+        let previousOperand = '';
+        let operation = undefined;
+
+        const currentOperandElement = document.getElementById('current-operand');
+        const previousOperandElement = document.getElementById('previous-operand');
 
         function updateDisplay() {
-            const display = document.getElementById('display');
-            display.innerText = currentInput;
+            currentOperandElement.innerText = currentOperand;
+            if (operation != null) {
+                previousOperandElement.innerText = `${previousOperand} ${operation}`;
+            } else {
+                previousOperandElement.innerText = '';
+            }
+        }
+
+        function clearAll() {
+            currentOperand = '0';
+            previousOperand = '';
+            operation = undefined;
+            updateDisplay();
+        }
+
+        function deleteNumber() {
+            if (currentOperand === '0') return;
+            currentOperand = currentOperand.toString().slice(0, -1);
+            if (currentOperand === '') currentOperand = '0';
+            updateDisplay();
         }
 
         function appendNumber(number) {
-            if (currentInput === '0' || shouldResetScreen) {
-                currentInput = number;
-                shouldResetScreen = false;
+            if (number === '.' && currentOperand.includes('.')) return;
+            if (currentOperand === '0' && number !== '.') {
+                currentOperand = number.toString();
             } else {
-                currentInput += number;
+                currentOperand = currentOperand.toString() + number.toString();
             }
             updateDisplay();
         }
 
-        function appendOperator(operator) {
-            const lastChar = currentInput.slice(-1);
-            // جلوگیری از زدن دو عملگر پشت سر هم
-            if (['+', '-', '*', '/'].includes(lastChar)) {
-                currentInput = currentInput.slice(0, -1) + operator;
-            } else {
-                currentInput += operator;
+        function chooseOperation(op) {
+            if (currentOperand === '') return;
+            if (previousOperand !== '') {
+                calculate();
             }
-            shouldResetScreen = false;
-            updateDisplay();
-        }
-
-        function clearDisplay() {
-            currentInput = '0';
+            operation = op === '*' ? '×' : (op === '/' ? '÷' : op);
+            previousOperand = currentOperand;
+            currentOperand = '0';
             updateDisplay();
         }
 
         function calculate() {
-            try {
-                // eval تابع ریاضی داخلی است که محاسبات را انجام می‌دهد
-                // ما از آن استفاده می‌کنیم چون فقط 4 عمل اصلی داریم
-                let result = eval(currentInput);
-                
-                // بررسی خطای تقسیم بر صفر
-                if (result === Infinity || result === -Infinity) {
-                    currentInput = 'خطا!';
-                } else {
-                    // گرد کردن اعداد اعشاری طولانی
-                    currentInput = parseFloat(result.toFixed(10)).toString();
-                }
-            } catch (error) {
-                currentInput = 'خطا!';
+            let computation;
+            const prev = parseFloat(previousOperand);
+            const current = parseFloat(currentOperand);
+            if (isNaN(prev) || isNaN(current)) return;
+
+            // تبدیل علامت های نمایشی به علامت های ریاضی
+            let mathOp = operation === '×' ? '*' : (operation === '÷' ? '/' : operation);
+
+            switch (mathOp) {
+                case '+':
+                    computation = prev + current;
+                    break;
+                case '-':
+                    computation = prev - current;
+                    break;
+                case '*':
+                    computation = prev * current;
+                    break;
+                case '/':
+                    if (current === 0) {
+                        alert('تقسیم بر صفر ممکن نیست!');
+                        clearAll();
+                        return;
+                    }
+                    computation = prev / current;
+                    break;
+                default:
+                    return;
             }
-            shouldResetScreen = true;
+
+            // گرد کردن اعداد اعشاری طولانی
+            currentOperand = Math.round(computation * 100000000) / 100000000;
+            operation = undefined;
+            previousOperand = '';
             updateDisplay();
         }
+
+        // اجرای اولیه
+        updateDisplay();
     </script>
 </body>
-              </html>
+</html>
