@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ماشین حساب مدرن</title>
+    
+    <!-- اتصال به فایل PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f2027">
+    
     <style>
         /* تنظیمات کلی */
         * {
@@ -178,7 +183,7 @@
     </div>
 
     <script>
-        // منطق ماشین حساب
+        // --- ۱. منطق ماشین حساب ---
         let currentOperand = '0';
         let previousOperand = '';
         let operation = undefined;
@@ -236,19 +241,12 @@
             const current = parseFloat(currentOperand);
             if (isNaN(prev) || isNaN(current)) return;
 
-            // تبدیل علامت های نمایشی به علامت های ریاضی
             let mathOp = operation === '×' ? '*' : (operation === '÷' ? '/' : operation);
 
             switch (mathOp) {
-                case '+':
-                    computation = prev + current;
-                    break;
-                case '-':
-                    computation = prev - current;
-                    break;
-                case '*':
-                    computation = prev * current;
-                    break;
+                case '+': computation = prev + current; break;
+                case '-': computation = prev - current; break;
+                case '*': computation = prev * current; break;
                 case '/':
                     if (current === 0) {
                         alert('تقسیم بر صفر ممکن نیست!');
@@ -257,19 +255,25 @@
                     }
                     computation = prev / current;
                     break;
-                default:
-                    return;
+                default: return;
             }
 
-            // گرد کردن اعداد اعشاری طولانی
             currentOperand = Math.round(computation * 100000000) / 100000000;
             operation = undefined;
             previousOperand = '';
             updateDisplay();
         }
 
-        // اجرای اولیه
         updateDisplay();
+
+        // --- ۲. ثبت Service Worker برای کارکرد آفلاین و PWA ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                .then(registration => console.log('ServiceWorker registered'))
+                .catch(err => console.log('ServiceWorker registration failed: ', err));
+            });
+        }
     </script>
 </body>
 </html>
