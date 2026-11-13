@@ -1,0 +1,19 @@
+{
+  "name": "ماشین حساب مدرن",
+  "short_name": "ماشین حساب",
+  "description": "یک ماشین حساب سریع و مدرن با قابلیت حالت شب و روز",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f2027",
+  "theme_color": "#0f2027",
+  "dir": "rtl",
+  "lang": "fa",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2343/2343805.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
